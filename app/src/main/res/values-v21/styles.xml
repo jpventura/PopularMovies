@@ -14,4 +14,8 @@
  - limitations under the License.
 -->
 <resources>
+    <style name="Widget.PopularMovies.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+    </style>
 </resources>

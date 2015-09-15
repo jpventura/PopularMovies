@@ -27,24 +27,23 @@ import java.util.Locale;
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class TabPagerAdapter extends FragmentPagerAdapter {
     private String[] mPageTitles;
 
-    public SectionsPagerAdapter(FragmentManager fm, String[] pageTitles) {
+    public TabPagerAdapter(FragmentManager fm, String[] pageTitles) {
         super(fm);
+
         mPageTitles = pageTitles;
     }
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a TabPageFragment (defined as a static inner class below).
-        return TabPageFragment.getInstance(position);
+        return TabPageFragment.newInstance(position);
     }
 
     @Override
     public int getCount() {
-        return TabPageFragment.getCount();
+        return 3;
     }
 
     @Override

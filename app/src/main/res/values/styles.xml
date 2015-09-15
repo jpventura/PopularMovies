@@ -14,7 +14,7 @@
  - limitations under the License.
 -->
 <resources>
-    <style name="Base.Theme.PopularMovies" parent="Theme.AppCompat">
+    <style name="Base.Theme.PopularMovies" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlHighlight">@color/colorControlHighlight</item>
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -22,5 +22,11 @@
     </style>
 
     <style name="Theme.PopularMovies" parent="Base.Theme.PopularMovies">
+        <item name="toolbarStyle">@style/Widget.PopularMovies.Toolbar</item>
+    </style>
+
+    <style name="Widget.PopularMovies.Toolbar" parent="Base.Theme.PopularMovies">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
     </style>
 </resources>

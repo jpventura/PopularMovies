@@ -16,18 +16,21 @@
 package com.jpventura.popularmovies.app;
 
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.FragmentTransaction;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jpventura.popularmovies.R;
-import com.jpventura.popularmovies.adapter.SectionsPagerAdapter;
+import com.jpventura.popularmovies.adapter.TabPagerAdapter;
 
-public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
+public class MainActivity extends AppCompatActivity
+        implements TabLayout.OnTabSelectedListener, ViewPager.OnPageChangeListener {
+    private static final String VIEW_PAGER_CURRENT_ITEM = "VIEW_PAGER_KEY";
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -36,12 +39,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private TabPagerAdapter mTabPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -49,38 +54,27 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main);
 
         // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         String[] pageTitles = getResources().getStringArray(R.array.page_title);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), pageTitles);
+        mTabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), pageTitles);
+
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setAdapter(mTabPagerAdapter);
+        mViewPager.addOnPageChangeListener(this);
 
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
+        // Set up the TabLayout with the pager adapter.
+        mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mTabLayout.setOnTabSelectedListener(this);
+        mTabLayout.setTabsFromPagerAdapter(mTabPagerAdapter);
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+        if ((null != state) && state.containsKey(VIEW_PAGER_CURRENT_ITEM)) {
+            mViewPager.setCurrentItem(state.getInt(VIEW_PAGER_CURRENT_ITEM));
         }
     }
 
@@ -88,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return false;
     }
 
     @Override
@@ -106,18 +100,31 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return super.onOptionsItemSelected(item);
     }
 
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        mTabLayout.setScrollPosition(position, positionOffset, true);
+    }
+
+    public void onPageSelected(int position) {
+    }
+
+    public void onPageScrollStateChanged(int state) {
+    }
+
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabSelected(TabLayout.Tab tab) {
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabUnselected(TabLayout.Tab tab) {
     }
 
     @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabReselected(TabLayout.Tab tab) {
+        // When the given tab is reselected, switch to the corresponding page in
+        // the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
     }
 }
