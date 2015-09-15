@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#ff009688</color>
+    <color name="colorAccentTranslucent">#80009688</color>
+    <color name="colorControlHighlight">#80009688</color> 
+    <color name="colorPrimary">#ff00bcd4</color>
+    <color name="colorPrimaryDark">#ff0097a7</color>
+    <color name="material_grey_900">#ff212121</color>
+    <color name="textColorPrimary">#ff212121</color>
+    <color name="textColorSecondary">#ff727272</color>
+</resources>
