@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_settings">Configurações</string>
+
+    <string name="app_name">Filmes Populares</string>
+
+    <string name="progress_dialog">Carregando</string>
+</resources>

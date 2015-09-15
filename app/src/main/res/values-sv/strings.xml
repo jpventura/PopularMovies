@@ -14,9 +14,9 @@
  - limitations under the License.
 -->
 <resources>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Populära Filmer</string>
 
-    <string name="app_name">Popular Movies</string>
+    <string name="action_settings">Inställningar</string>
 
-    <string name="progress_dialog">Loading</string>
+    <string name="progress_dialog">Laddar</string>
 </resources>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
  - Copyright 2015 Joao Paulo Fernandes Ventura.
  -
@@ -14,9 +15,9 @@
  - limitations under the License.
 -->
 <resources>
-    <string name="action_settings">Settings</string>
-
-    <string name="app_name">Popular Movies</string>
-
-    <string name="progress_dialog">Loading</string>
+    <string-array name="page_title">
+        <item>Nos cinemas</item>
+        <item>Populares</item>
+        <item>Melhores</item>
+    </string-array>
 </resources>
