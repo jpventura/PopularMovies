@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2015 Joao Paulo Fernandes Ventura
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +20,10 @@ import android.database.Cursor;
 import android.widget.Filter;
 
 /**
- * The CursorFilter delegates most of the work to the
- * {@link android.widget.CursorAdapter}. Subclasses should override these
- * delegate methods to run the queries and convert the results into String
- * that can be used by auto-completion widgets.
+ * <p>The CursorFilter delegates most of the work to the CursorAdapter.
+ * Subclasses should override these delegate methods to run the queries
+ * and convert the results into String that can be used by auto-completion
+ * widgets.</p>
  */
 class CursorFilter extends Filter {
 
@@ -30,8 +31,11 @@ class CursorFilter extends Filter {
 
     interface CursorFilterClient {
         CharSequence convertToString(Cursor cursor);
+
         Cursor runQueryOnBackgroundThread(CharSequence constraint);
+
         Cursor getCursor();
+
         void changeCursor(Cursor cursor);
     }
 
@@ -49,7 +53,7 @@ class CursorFilter extends Filter {
         Cursor cursor = mClient.runQueryOnBackgroundThread(constraint);
 
         FilterResults results = new FilterResults();
-        if (null != cursor) {
+        if (cursor != null) {
             results.count = cursor.getCount();
             results.values = cursor;
         } else {

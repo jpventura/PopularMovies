@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2015 Joao Paulo Fernandes Ventura
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +16,42 @@
  */
 package com.jpventura.popularmovies.domain.widget;
 
-import android.content.Context;
 import android.database.ContentObserver;
+import android.database.Cursor;
+import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.os.Handler;
+import android.support.annotation.WorkerThread;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.widget.Filter;
 
+import android.widget.FilterQueryProvider;
 import android.widget.Filterable;
 
-import com.jpventura.popularmovies.domain.provider.base.AbstractCursor;
+/**
+ * Provide a {@link android.support.v7.widget.RecyclerView.Adapter} implementation with cursor
+ * support.
+ *
+ * Child classes only need to implement {@link #onCreateViewHolder(android.view.ViewGroup, int)} and
+ * {@link #onBindViewHolderCursor(android.support.v7.widget.RecyclerView.ViewHolder, android.database.Cursor)}.
+ *
+ * This class does not implement deprecated fields and methods from CursorAdapter! Incidentally,
+ * only {@link android.widget.CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER} is available, so the
+ * flag is implied, and only the Adapter behavior using this flag has been ported.
+ *
+ * @param <VH> {@inheritDoc}
+ *
+ * @see android.support.v7.widget.RecyclerView.Adapter
+ * @see android.widget.CursorAdapter
+ * @see android.widget.Filterable
+ * @see CursorFilter
+ */
+public abstract class CursorRecyclerAdapter<VH extends ViewHolder> extends RecyclerView.Adapter<VH>
+        implements Filterable, CursorFilter.CursorFilterClient {
+    private final DataSetObservable mDataSetObservable = new DataSetObservable();
 
-public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
-        extends RecyclerView.Adapter<T> implements Filterable, CursorFilter.CursorFilterClient {
-    /**
-     * This field should be made private, so it is hidden from the SDK.
-     * {@hide}
-     */
-    protected boolean mAutoRequery;
     /**
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}
@@ -43,12 +61,12 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}
      */
-    protected AbstractCursor mCursor;
+    protected boolean mAutoRequery;
     /**
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}
      */
-    protected Context mContext;
+    protected Cursor mCursor;
     /**
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}
@@ -58,7 +76,7 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}
      */
-    protected ContentObserver mContentObserver;
+    protected ChangeObserver mChangeObserver;
     /**
      * This field should be made private, so it is hidden from the SDK.
      * {@hide}
@@ -76,86 +94,50 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
     protected FilterQueryProvider mFilterQueryProvider;
 
     /**
-     * If set the adapter will call requery() on the cursor whenever a content change
-     * notification is delivered. Implies {@link #FLAG_REGISTER_CONTENT_OBSERVER}.
-     *
-     * @deprecated This option is discouraged, as it results in Cursor queries
-     * being performed on the application's UI thread and thus can cause poor
-     * responsiveness or even Application Not Responding errors.  As an alternative,
-     * use {@link android.app.LoaderManager} with a {@link android.content.CursorLoader}.
-     */
-    @Deprecated
-    public static final int FLAG_AUTO_REQUERY = 0x01;
-
-    /**
-     * If set the adapter will register a content observer on the cursor and will call
-     * {@link #onContentChanged()} when a notification comes in.  Be careful when
-     * using this flag: you will need to unset the current Cursor from the adapter
-     * to avoid leaks due to its registered observers.  This flag is not needed
-     * when using a CursorAdapter with a
-     * {@link android.content.CursorLoader}.
-     */
-    public static final int FLAG_REGISTER_CONTENT_OBSERVER = 0x02;
-
-    /**
-     * Called when the {@link ContentObserver} on the cursor receives a change notification.
-     * The default implementation provides the auto-requery logic, but may be overridden by
-     * sub classes.
-     *
-     * @see ContentObserver#onChange(boolean)
-     */
-    protected void onContentChanged() {
-        if (mAutoRequery && mCursor != null && !mCursor.isClosed()) {
-            if (false) Log.v("Cursor", "Auto requerying " + mCursor + " due to update");
-            mDataValid = mCursor.requery();
-        }
-    }
-
-    /**
-     * Bind an existing view to the data pointed to by cursor
-     * @param holder Existing view holder
-     * @param context Interface to application's global information
-     * @param cursor The cursor from which to get the data. The cursor is already
-     * moved to the correct position.
-     */
-    public abstract void onBindViewHolder(T holder, Context context, AbstractCursor cursor);
-
-    /**
      * @param cursor The cursor from which to get the data.
-     * @param context The context
-     * @param flags Flags used to determine the behavior of the adapter;
-     *              Currently it accept {@link #FLAG_REGISTER_CONTENT_OBSERVER}.
      */
-    public CursorRecyclerAdapter(Context context, AbstractCursor cursor, int flags) {
-        if ((flags & FLAG_AUTO_REQUERY) == FLAG_AUTO_REQUERY) {
-            flags |= FLAG_REGISTER_CONTENT_OBSERVER;
-            mAutoRequery = true;
-        } else {
-            mAutoRequery = false;
-        }
-        boolean cursorPresent = cursor != null;
+    public CursorRecyclerAdapter(Cursor cursor) {
+        boolean cursorPresent = (null != cursor);
         mCursor = cursor;
         mDataValid = cursorPresent;
-        mContext = context;
         mRowIDColumn = cursorPresent ? cursor.getColumnIndexOrThrow("_id") : -1;
 
-        if ((flags & FLAG_REGISTER_CONTENT_OBSERVER) == FLAG_REGISTER_CONTENT_OBSERVER) {
-            mContentObserver = createContentObserver();
-            mDataSetObserver = createDataSetObserver();
-        } else {
-            mContentObserver = null;
-            mDataSetObserver = null;
-        }
+        mChangeObserver = new ChangeObserver();
+        mDataSetObserver = new MyDataSetObserver();
 
         if (cursorPresent) {
-            if (mContentObserver != null) cursor.registerContentObserver(mContentObserver);
+            if (mChangeObserver != null) cursor.registerContentObserver(mChangeObserver);
             if (mDataSetObserver != null) cursor.registerDataSetObserver(mDataSetObserver);
         }
-        setHasStableIds(true);
+    }
+
+    public void registerDataSetObserver(DataSetObserver observer) {
+        mDataSetObservable.registerObserver(observer);
+    }
+
+    public void unregisterDataSetObserver(DataSetObserver observer) {
+        mDataSetObservable.unregisterObserver(observer);
     }
 
     /**
-     * @see android.support.v7.widget.RecyclerView.Adapter#getItemCount()
+     * Notifies the attached observers that the underlying data is no longer valid
+     * or available. Once invoked this adapter is no longer valid and should
+     * not report further data set changes.
+     */
+    public void notifyDataSetInvalidated() {
+        mDataSetObservable.notifyInvalidated();
+    }
+
+    /**
+     * Returns the cursor.
+     * @return the cursor.
+     */
+    public Cursor getCursor(){
+        return mCursor;
+    }
+
+    /**
+     * @see RecyclerView.Adapter#getItemCount()
      */
     @Override
     public int getItemCount() {
@@ -167,18 +149,7 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
     }
 
     /**
-     * Returns the cursor.
-     * @return the cursor.
-     */
-    public AbstractCursor getCursor() {
-        return mCursor;
-    }
-
-    /**
-     * @see android.support.v7.widget.RecyclerView.Adapter#getItemId(int)
-     *
-     * @param position Adapter position to query
-     * @return
+     * @see RecyclerView.Adapter#getItemId(int)
      */
     @Override
     public long getItemId(int position) {
@@ -193,17 +164,35 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
         }
     }
 
+    /**
+     * This method will move the Cursor to the correct position and call
+     * {@link #onBindViewHolderCursor(android.support.v7.widget.RecyclerView.ViewHolder,
+     * android.database.Cursor)}.
+     *
+     * @param holder {@inheritDoc}
+     * @param i {@inheritDoc}
+     */
     @Override
-    public void onBindViewHolder(T holder, int position) {
+    public void onBindViewHolder(VH holder, int i){
         if (!mDataValid) {
             throw new IllegalStateException("this should only be called when the cursor is valid");
         }
-        if (!mCursor.moveToPosition(position)) {
-            throw new IllegalStateException("couldn't move cursor to position " + position);
+        if (!mCursor.moveToPosition(i)) {
+            throw new IllegalStateException("couldn't move cursor to position " + i);
         }
-
-        onBindViewHolder(holder, mContext, mCursor);
+        onBindViewHolderCursor(holder, mCursor);
     }
+
+    /**
+     * See {@link android.widget.CursorAdapter#bindView(android.view.View, android.content.Context,
+     * android.database.Cursor)},
+     * {@link #onBindViewHolder(android.support.v7.widget.RecyclerView.ViewHolder, int)}
+     *
+     * @param holder View holder.
+     * @param cursor The cursor from which to get the data. The cursor is already
+     * moved to the correct position.
+     */
+    public abstract void onBindViewHolderCursor(VH holder, Cursor cursor);
 
     /**
      * Change the underlying cursor to a new cursor. If there is an existing cursor it will be
@@ -211,8 +200,8 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      *
      * @param cursor The new cursor to be used
      */
-    public void changeCursor(AbstractCursor cursor) {
-        AbstractCursor old = swapCursor(cursor);
+    public void changeCursor(Cursor cursor) {
+        Cursor old = swapCursor(cursor);
         if (old != null) {
             old.close();
         }
@@ -220,7 +209,7 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
 
     /**
      * Swap in a new Cursor, returning the old Cursor.  Unlike
-     * {@link #changeCursor(AbstractCursor)}, the returned old Cursor is <em>not</em>
+     * {@link #changeCursor(Cursor)}, the returned old Cursor is <em>not</em>
      * closed.
      *
      * @param newCursor The new cursor to be used.
@@ -228,26 +217,29 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      * If the given new Cursor is the same instance is the previously set
      * Cursor, null is also returned.
      */
-    public AbstractCursor swapCursor(AbstractCursor newCursor) {
+    public Cursor swapCursor(Cursor newCursor) {
         if (newCursor == mCursor) {
             return null;
         }
-        AbstractCursor oldCursor = mCursor;
+        Cursor oldCursor = mCursor;
         if (oldCursor != null) {
-            if (mContentObserver != null) oldCursor.unregisterContentObserver(mContentObserver);
+            if (mChangeObserver != null) oldCursor.unregisterContentObserver(mChangeObserver);
             if (mDataSetObserver != null) oldCursor.unregisterDataSetObserver(mDataSetObserver);
         }
         mCursor = newCursor;
         if (newCursor != null) {
-            if (mContentObserver != null) newCursor.registerContentObserver(mContentObserver);
+            if (mChangeObserver != null) newCursor.registerContentObserver(mChangeObserver);
             if (mDataSetObserver != null) newCursor.registerDataSetObserver(mDataSetObserver);
             mRowIDColumn = newCursor.getColumnIndexOrThrow("_id");
             mDataValid = true;
+            // notify the observers about the new cursor
             notifyDataSetChanged();
         } else {
             mRowIDColumn = -1;
             mDataValid = false;
-            notifyDataSetChanged();
+            // notify the observers about the lack of a data set
+            // notifyDataSetInvalidated();
+            notifyItemRangeRemoved(0, getItemCount());
         }
         return oldCursor;
     }
@@ -261,7 +253,7 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      * @param cursor the cursor to convert to a CharSequence
      * @return a CharSequence representing the value
      */
-    public CharSequence convertToString(AbstractCursor cursor) {
+    public CharSequence convertToString(Cursor cursor) {
         return cursor == null ? "" : cursor.toString();
     }
 
@@ -273,7 +265,7 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      * {@link android.widget.FilterQueryProvider}.
      * If no provider is specified, the current cursor is not filtered and returned.
      *
-     * After this method returns the resulting cursor is passed to {@link #changeCursor(AbstractCursor)}
+     * After this method returns the resulting cursor is passed to {@link #changeCursor(Cursor)}
      * and the previous cursor is closed.
      *
      * This method is always executed on a background thread, not on the
@@ -288,9 +280,10 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      *
      * @see #getFilter()
      * @see #getFilterQueryProvider()
-     * @see #setFilterQueryProvider(com.jpventura.popularmovies.domain.widget.FilterQueryProvider)
+     * @see #setFilterQueryProvider(android.widget.FilterQueryProvider)
      */
-    public AbstractCursor runQueryOnBackgroundThread(CharSequence constraint) {
+    @WorkerThread
+    public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
         if (mFilterQueryProvider != null) {
             return mFilterQueryProvider.runQuery(constraint);
         }
@@ -311,7 +304,7 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
      *
      * @return the current filter query provider or null if it does not exist
      *
-     * @see #setFilterQueryProvider(com.jpventura.popularmovies.domain.widget.FilterQueryProvider)
+     * @see #setFilterQueryProvider(android.widget.FilterQueryProvider)
      * @see #runQueryOnBackgroundThread(CharSequence)
      */
     public FilterQueryProvider getFilterQueryProvider() {
@@ -334,32 +327,49 @@ public abstract class CursorRecyclerAdapter<T extends RecyclerView.ViewHolder>
         mFilterQueryProvider = filterQueryProvider;
     }
 
-    private ContentObserver createContentObserver() {
-        return new ContentObserver(new Handler()) {
-            @Override
-            public boolean deliverSelfNotifications() {
-                return true;
-            }
-
-            @Override
-            public void onChange(boolean selfChange) {
-                onContentChanged();
-            }
-        };
+    /**
+     * Called when the {@link ContentObserver} on the cursor receives a change notification.
+     * Can be implemented by sub-class.
+     *
+     * @deprecated {@linke mAutoRequery} is always false
+     * @see ContentObserver#onChange(boolean)
+     */
+    @Deprecated
+    protected void onContentChanged() {
+        if (mAutoRequery && mCursor != null && !mCursor.isClosed()) {
+            if (false) Log.v("Cursor", "Auto requerying " + mCursor + " due to update");
+            mDataValid = mCursor.requery();
+        }
     }
 
-    private DataSetObserver createDataSetObserver() {
-        return new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                mDataValid = true;
-                notifyDataSetChanged();
-            }
+    private class ChangeObserver extends ContentObserver {
+        public ChangeObserver() {
+            super(new Handler());
+        }
 
-            @Override
-            public void onInvalidated() {
-                mDataValid = false;
-            }
-        };
+        @Override
+        public boolean deliverSelfNotifications() {
+            return true;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            onContentChanged();
+        }
+    }
+
+    private class MyDataSetObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            mDataValid = true;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onInvalidated() {
+            mDataValid = false;
+            notifyDataSetInvalidated();
+            notifyItemRangeRemoved(0, getItemCount());
+        }
     }
 }
