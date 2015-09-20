@@ -15,8 +15,6 @@
  */
 package com.jpventura.popularmovies.domain.service.backend;
 
-import com.jpventura.popularmovies.domain.backend.Movie;
-
 import retrofit.Callback;
 import retrofit.client.Response;
 

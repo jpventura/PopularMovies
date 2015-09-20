@@ -4,6 +4,12 @@ import android.content.Context;
 
 import com.jpventura.popularmovies.domain.BuildConfig;
 import com.jpventura.popularmovies.domain.provider.movie.MovieContentValues;
+import com.jpventura.popularmovies.domain.service.backend.GetMovieCallback;
+import com.jpventura.popularmovies.domain.service.backend.GetMovieListCallback;
+import com.jpventura.popularmovies.domain.service.backend.IMovieDB;
+import com.jpventura.popularmovies.domain.service.backend.ListType;
+import com.jpventura.popularmovies.domain.service.backend.Movie;
+import com.jpventura.popularmovies.domain.service.backend.ResultPage;
 
 import java.lang.ref.WeakReference;
 import java.util.List;

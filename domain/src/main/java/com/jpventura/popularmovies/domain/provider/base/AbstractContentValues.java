@@ -22,8 +22,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcel;
 
-import java.util.Set;
-
 public abstract class AbstractContentValues<T> {
     protected final ContentValues mContentValues = new ContentValues();
 

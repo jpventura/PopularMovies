@@ -23,8 +23,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jpventura.popularmovies.domain.backend.Movie;
 import com.jpventura.popularmovies.domain.provider.base.AbstractContentValues;
+import com.jpventura.popularmovies.domain.service.backend.Movie;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
