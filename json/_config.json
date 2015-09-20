@@ -1,0 +1,14 @@
+{
+    "syntaxVersion": 3,
+    "projectPackageId": "com.jpventura.popularmovies",
+    "authority": "com.jpventura.popularmovies",
+    "providerJavaPackage": "com.jpventura.popularmovies.domain.provider",
+    "providerClassName": "PopularMoviesProvider",
+    "sqliteOpenHelperClassName": "PopularMoviesDB",
+    "sqliteOpenHelperCallbacksClassName": "PopularMoviesDBCallbacks",
+    "databaseFileName": "popular_movies.db",
+    "databaseVersion": 1,
+    "enableForeignKeys": true,
+    "useAnnotations": true
+}
+

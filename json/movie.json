@@ -1,0 +1,90 @@
+{
+    "documentation": "Popular Movies Content Provider.",
+    "fields": [
+        {
+            "name": "adult",
+            "type": "Boolean",
+        },
+        {
+            "name": "backdrop_path",
+            "type": "String",
+        },
+        {
+            "name": "budget",
+            "type": "Long",
+        },
+        {
+            "name": "favorite",
+            "type": "Boolean",
+            "defaultValue": false
+        },
+        {
+            "name": "homepage",
+            "type": "String",
+        },
+        {
+            "name": "imdb_id",
+            "type": "String",
+        },
+        {
+            "name": "jessica",
+            "type": "Long",
+            "nullable": false
+        },
+        {
+            "name": "original_title",
+            "type": "String",
+        },
+        {
+            "name": "overview",
+            "type": "String",
+        },
+        {
+            "name": "popularity",
+            "type": "Double",
+        },
+        {
+            "name": "poster_path",
+            "type": "String",
+            "nullable": false
+        },
+        {
+            "name": "release_date",
+            "type": "Date",
+        },
+        {
+            "name": "revenue",
+            "type": "Long",
+        },
+        {
+            "name": "runtime",
+            "type": "Integer",
+        },
+        {
+            "name": "status",
+            "type": "String",
+        },
+        {
+            "name": "tagline",
+            "type": "String",
+        },
+        {
+            "name": "title",
+            "type": "String",
+        },
+        {
+            "name": "vote_average",
+            "type": "Double",
+        },
+        {
+            "name": "vote_count",
+            "type": "Integer",
+        }
+    ],
+    "constraints": [
+        {
+            "name": "UNIQUE_ID",
+            "definition": "UNIQUE (jessica) ON CONFLICT REPLACE"
+        }
+    ]
+}
