@@ -23,6 +23,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.jpventura.popularmovies.R;
 import com.jpventura.popularmovies.adapter.TabPagerAdapter;
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity
         String[] pageTitles = getResources().getStringArray(R.array.page_title);
         mTabPagerAdapter = new TabPagerAdapter(getSupportFragmentManager(), pageTitles);
 
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mTabPagerAdapter);
@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity
         mTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         mTabLayout.setOnTabSelectedListener(this);
-        mTabLayout.setTabsFromPagerAdapter(mTabPagerAdapter);
 
+        mTabLayout.setTabsFromPagerAdapter(mTabPagerAdapter);
         if ((null != state) && state.containsKey(VIEW_PAGER_CURRENT_ITEM)) {
             mViewPager.setCurrentItem(state.getInt(VIEW_PAGER_CURRENT_ITEM));
         }
@@ -83,6 +83,12 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return false;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(VIEW_PAGER_CURRENT_ITEM, mViewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -105,6 +111,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onPageSelected(int position) {
+        mTabLayout.setScrollPosition(position, 0, true);
     }
 
     public void onPageScrollStateChanged(int state) {

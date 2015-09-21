@@ -18,5 +18,8 @@
 
     <string name="action_settings">Inställningar</string>
 
+    <string name="card_overview">Ingen beskrivning tillgänglig.</string>
+
     <string name="progress_dialog">Laddar</string>
+
 </resources>

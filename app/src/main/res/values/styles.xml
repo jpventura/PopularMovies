@@ -25,6 +25,14 @@
         <item name="toolbarStyle">@style/Widget.PopularMovies.Toolbar</item>
     </style>
 
+    <style name="Widget.PopularMovies.CardView" parent="CardView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_height">@dimen/card_layout_height</item>
+        <item name="android:layout_width">@dimen/card_layout_width</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+    </style>
+
     <style name="Widget.PopularMovies.Toolbar" parent="Base.Theme.PopularMovies">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:minHeight">?attr/actionBarSize</item>

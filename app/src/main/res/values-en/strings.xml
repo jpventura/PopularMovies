@@ -18,5 +18,7 @@
 
     <string name="app_name">Popular Movies</string>
 
+    <string name="card_overview">No description available.</string>
+
     <string name="progress_dialog">Loading</string>
 </resources>
