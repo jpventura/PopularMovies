@@ -14,8 +14,37 @@
  - limitations under the License.
 -->
 <resources>
+    <style name="Theme.PopularMovies.Transparent" parent="Base.Theme.PopularMovies">
+        <item name="toolbarStyle">@style/Widget.PopularMovies.Toolbar.Transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:toolbarStyle">@style/Widget.PopularMovies.Toolbar.Transparent</item>
+    </style>
+
+    <style name="Widget.PopularMovies.CardView" parent="CardView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_height">@dimen/card_layout_height</item>
+        <item name="android:layout_width">@dimen/card_layout_width</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+    </style>
+
+    <style name="Widget.PopularMovies.CardView.Transparent" parent="CardView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_height">@dimen/card_layout_height</item>
+        <item name="android:layout_width">@dimen/card_layout_width</item>
+        <item name="cardBackgroundColor">@color/cardBackgroundColor</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+    </style>
+
     <style name="Widget.PopularMovies.Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:minHeight">?attr/actionBarSize</item>
+    </style>
+
+    <style name="Widget.PopularMovies.Toolbar.Transparent" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:elevation">6dp</item>
     </style>
 </resources>

@@ -2,7 +2,9 @@
 <resources>
     <color name="colorAccent">#ff009688</color>
     <color name="colorAccentTranslucent">#80009688</color>
+    <color name="cardBackgroundColor">@color/material_grey_900</color>
     <color name="colorControlHighlight">#80009688</color> 
+    <color name="colorDarkTransparent">#80000000</color>
     <color name="colorPrimary">#ff00bcd4</color>
     <color name="colorPrimaryDark">#ff0097a7</color>
     <color name="material_grey_900">#ff212121</color>

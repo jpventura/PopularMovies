@@ -21,4 +21,6 @@
     <dimen name="card_elevation">0.01dp</dimen>
     <dimen name="card_layout_height">244dp</dimen>
     <dimen name="card_layout_width">168dp</dimen>
+    <dimen name="rating_bar_height">22dp</dimen>
+    <dimen name="text_title_size">24sp</dimen>
 </resources>

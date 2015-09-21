@@ -51,12 +51,14 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "tmdb_url_backdrop", "https://image.tmdb.org/t/p/original"
             resValue "string", "tmdb_url_poster", "https://image.tmdb.org/t/p/w342"
             signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "tmdb_url_backdrop", "https://image.tmdb.org/t/p/original"
             resValue "string", "tmdb_url_poster", "https://image.tmdb.org/t/p/w342"
             signingConfig signingConfigs.release
         }
@@ -68,6 +70,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
+    compile 'com.android.support:palette-v7:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.google.guava:guava:18.0'
     compile 'com.squareup.picasso:picasso:2.5.2'

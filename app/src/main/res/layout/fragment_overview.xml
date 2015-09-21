@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="4dp"
+    android:paddingTop="32dp"
+    android:background="@android:color/transparent"
+    tools:context=".app.OverviewFragment">
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        style="@style/Widget.PopularMovies.CardView.Transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:padding="16dp"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Headline"
+
+                style="@style/TextAppearance.PopularMovies.Headline" />
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                style="@style/Widget.PopularMovies.RatingBar" />
+            <TextView
+                android:id="@+id/subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Short description"
+                style="?android:attr/textAppearanceSmall" />
+            <TextView
+                android:id="@+id/text_overview"
+                android:textColor="@android:color/white"
+                android:layout_width="match_parent"
+                android:textSize="16sp"
+                android:text="@string/card_overview"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>
