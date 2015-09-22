@@ -93,6 +93,10 @@ public class GetMoviesFromServer {
         mMovieDB.getMovieList(listType, apiKey, Locale.getDefault().getLanguage(), onGetMovieList);
     }
 
+    private boolean isValueMissing(Movie movie) {
+        return null == movie.backdrop_path || null == movie.overview || null == movie.release_date;
+    }
+
     private void insertMovieIntoDatabase(Movie movie) {
         mMovieContentValues.putAll(movie).insert(mContext.get());
     }
@@ -100,7 +104,12 @@ public class GetMoviesFromServer {
     private void insertMovieListIntoDatabase(List<Movie> movieList) {
         for (Movie movie : movieList) {
             if (null == movie.poster_path) continue;
-            insertMovieIntoDatabase(movie);
+
+            if (isValueMissing(movie)) {
+                getMovieFromServer(movie.id);
+            } else {
+                insertMovieIntoDatabase(movie);
+            }
         }
     }
 }
