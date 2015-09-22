@@ -25,6 +25,8 @@ import android.content.SyncResult;
 import android.os.Bundle;
 
 import com.jpventura.popularmovies.domain.R;
+import com.jpventura.popularmovies.domain.service.backend.GetMoviesFromServer;
+import com.jpventura.popularmovies.domain.service.backend.ListType;
 
 public class DomainSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int DAY_IN_SECONDS = 24 * 60 * 60;
@@ -33,6 +35,8 @@ public class DomainSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static DomainSyncAdapter sDomainSyncAdapter;
     private static final Object sSyncAdapterLock = new Object();
+
+    private GetMoviesFromServer mGetMovieFromServer;
 
     public static DomainSyncAdapter getInstance(Context context) {
         if (null == sDomainSyncAdapter) {
@@ -46,10 +50,14 @@ public class DomainSyncAdapter extends AbstractThreadedSyncAdapter {
 
     public DomainSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        mGetMovieFromServer = new GetMoviesFromServer(context);
     }
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        mGetMovieFromServer.execute(ListType.NOW_PLAYING);
+        mGetMovieFromServer.execute(ListType.POPULAR);
+        mGetMovieFromServer.execute(ListType.TOP_RATED);
     }
 
     /**

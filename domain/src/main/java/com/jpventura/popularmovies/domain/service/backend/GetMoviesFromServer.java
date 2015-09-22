@@ -18,6 +18,7 @@ package com.jpventura.popularmovies.domain.service.backend;
 import android.content.Context;
 
 import com.jpventura.popularmovies.domain.BuildConfig;
+import com.jpventura.popularmovies.domain.R;
 import com.jpventura.popularmovies.domain.provider.movie.MovieContentValues;
 
 import java.lang.ref.WeakReference;
@@ -30,8 +31,6 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class GetMoviesFromServer {
-    private static final String API_KEY = "29d1cd112a40a9ddd1a6c016eec74ecb";
-
     private WeakReference<Context> mContext;
     private IMovieDB mMovieDB;
     private MovieContentValues mMovieContentValues;
@@ -71,7 +70,8 @@ public class GetMoviesFromServer {
             }
         };
 
-        mMovieDB.getMovie(id, API_KEY, Locale.getDefault().getLanguage(), onGetMovie);
+        String apiKey = mContext.get().getString(R.string.tmdb_api_key);
+        mMovieDB.getMovie(id, apiKey, Locale.getDefault().getLanguage(), onGetMovie);
     }
 
     private void getMovieListFromServer(ListType listType) {
@@ -89,7 +89,8 @@ public class GetMoviesFromServer {
             }
         };
 
-        mMovieDB.getMovieList(listType, API_KEY, Locale.getDefault().getLanguage(), onGetMovieList);
+        String apiKey = mContext.get().getString(R.string.tmdb_api_key);
+        mMovieDB.getMovieList(listType, apiKey, Locale.getDefault().getLanguage(), onGetMovieList);
     }
 
     private void insertMovieIntoDatabase(Movie movie) {
