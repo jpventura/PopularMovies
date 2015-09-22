@@ -27,14 +27,26 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true" />
 
-    <ImageView
-        android:id="@+id/image_view_background"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:fitsSystemWindows="true"
-        android:clickable="false"
-        android:src="@drawable/placeholder" />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/image_view_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:fitsSystemWindows="true"
+            android:clickable="false"
+            android:src="@drawable/placeholder" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBottom="@+id/image_view_background"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/watermark" />
+    </RelativeLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroll"
